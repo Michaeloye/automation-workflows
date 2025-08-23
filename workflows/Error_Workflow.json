@@ -1,0 +1,60 @@
+{
+  "name": "Error Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7e9c440d-e6c5-4fab-8e35-597aed684bb8",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hello Channel\nAn Error just occured\nError details: \n- URL: {{ $json.execution.url }}\n- Message: {{ $json.execution.error.message }}\n- Last Node Executed: {{ $json.execution.lastNodeExecuted }}\n- Workflow Name: {{ $json.workflow.name }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1b524ea7-6903-4367-8faf-b06492535f60",
+      "name": "Discord",
+      "webhookId": "2e489506-e9ea-4512-9dcf-3c60e9dfc97e",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "4IXsLSEavQHq0e4a",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

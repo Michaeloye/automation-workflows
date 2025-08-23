@@ -1,0 +1,401 @@
+{
+  "name": "webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "8514e4b6-aa58-4ebe-a143-5dacd945b1db",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "26095366-45d3-48df-96d2-279451982c28",
+      "name": "Webhook",
+      "webhookId": "8514e4b6-aa58-4ebe-a143-5dacd945b1db"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "invited_team_member",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "88811c37-b835-46b5-a767-057313cd9830"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bfaa504b-8d20-486f-bf34-4acecce537c2",
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "team_member_verified",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f562d639-601d-449c-bfde-1e8808bc69e4",
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "99fe9109-c46e-477e-9b4b-2bc7ce25133f",
+                    "leftValue": "={{ $json.body.event }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        496,
+        -144
+      ],
+      "id": "d67020d2-e4c2-4bdd-b01d-65728c5dbafe",
+      "name": "Event type?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE",
+          "mode": "list",
+          "cachedResultName": "n8n Dummy Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "first_name": "={{ $json.body.first_name }}",
+            "last_name": "={{ $json.body.last_name }}",
+            "email": "={{ $json.body.email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        752,
+        -240
+      ],
+      "id": "39fa9aa7-d35b-4403-8430-4a1489446847",
+      "name": "Add new user",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TWwIfKkGu30VvV1c",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hi @everyone we can say that {{ $json.body.first_name }} {{ $json.body.last_name }} with email {{ $json.body.email }} has been verified",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        752,
+        -96
+      ],
+      "id": "e89054b8-a4ac-4fce-986e-a4829919b150",
+      "name": "Send verified user message",
+      "webhookId": "baabad66-6eeb-46f4-8010-3914421a7158",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "4IXsLSEavQHq0e4a",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "Hook event was Invalid"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        752,
+        16
+      ],
+      "id": "864ccfb4-e4a9-4af7-b922-e95d72abc02b",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b3b9b25f-c58f-4723-acd8-36c17b67ee6d",
+              "leftValue": "={{ $json.body.email }}",
+              "rightValue": "^[\\w.%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d2d3ea14-687c-44ce-a8e6-7a001a55cc47",
+      "name": "Valid Email?"
+    },
+    {
+      "parameters": {
+        "errorMessage": "The email is Invalid"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        496,
+        112
+      ],
+      "id": "dfacd6a5-6baa-456b-b003-bf2f27388b32",
+      "name": "Stop and Error1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Valid Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Event type?": {
+      "main": [
+        [
+          {
+            "node": "Add new user",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send verified user message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send verified user message": {
+      "main": [
+        []
+      ]
+    },
+    "Valid Email?": {
+      "main": [
+        [
+          {
+            "node": "Event type?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "notguy47.app.n8n.cloud",
+            "user-agent": "Thunder Client (https://www.thunderclient.com)",
+            "content-length": "134",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "102.89.69.112",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "NG",
+            "cf-ray": "96c2f2f137920ac6-LHR",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "102.89.69.112, 172.71.241.154",
+            "x-forwarded-host": "notguy47.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-17-7798f56955-hkfgf",
+            "x-is-trusted": "yes",
+            "x-real-ip": "102.89.69.112"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "1",
+            "first_name": "David",
+            "last_name": "Femi",
+            "email": "davishpemsdf@test.com",
+            "event": "team_member_verified"
+          },
+          "webhookUrl": "https://notguy47.app.n8n.cloud/webhook-test/8514e4b6-aa58-4ebe-a143-5dacd945b1db",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

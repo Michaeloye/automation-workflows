@@ -1,0 +1,103 @@
+{
+  "name": "Transform Data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7e00e226-4e1e-446e-92d4-26c429cb5f51",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"my_field_1\": \"value\",\n  \"my_field_2\": 1\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1c2005db-45ae-4706-8dac-c000e8730bec",
+      "name": "Book mock data"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst transformData = (data) => {\n  const date = new Date(data.published_at);\n\n  const formattedDate = date.toLocaleString(\"en-US\", {\n      year: \"numeric\",\n      month: \"long\",\n      day: \"numeric\",\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true\n    })\n    .replace(\",\", \"\");\n\n  const newData = {\n    title: data.title,\n    author: data.author,\n    publishedAt: formattedDate,\n    category: data.category,\n  };\n\n  return newData;\n};\n\nreturn transformData($json);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "a0b163ef-cc3e-4536-bd3b-9fcfb24d6183",
+      "name": "Transform date in mock data"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Book mock data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Book mock data": {
+      "main": [
+        [
+          {
+            "node": "Transform date in mock data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Book mock data": [
+      {
+        "json": {
+          "title": "  n8n   launches New   AI features!  ",
+          "author": "Jane Doe",
+          "published_at": "2025-08-01T13:45:00Z",
+          "category": " Tech "
+        }
+      },
+      {
+        "json": {
+          "title": "How to Build Automations with   n8n ",
+          "author": " John Smith ",
+          "published_at": "2025-07-28T09:15:00Z",
+          "category": "tutorials"
+        }
+      },
+      {
+        "json": {
+          "title": "Top 5 APIs for  productivity  ",
+          "author": "Alex Johnson",
+          "published_at": "2025-08-10T18:30:00Z",
+          "category": " Productivity "
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": null
+}

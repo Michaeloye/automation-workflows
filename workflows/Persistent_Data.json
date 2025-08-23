@@ -1,0 +1,100 @@
+{
+  "name": "Persistent Data",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "33c3d9be-0530-4936-90b0-aca1bfffeaec",
+      "name": "Schedule Trigger",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $getWorkflowStaticData(\"global\");\ndata.counter = (data?.counter || 0) + 1;\n\nreturn { runCount: data.counter, testKey: $vars.TEST_KEY };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "27a66df5-2885-42f4-a6d6-40bd4b5bd977",
+      "name": "Get and Set Global Counter"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hello this is the number of times your workflow has run: {{ $json.runCount }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "2bade81f-6a30-4c52-89cb-2eaf20bdb350",
+      "name": "Send Count to Discord Channel",
+      "webhookId": "76f0fdc3-6597-46ee-8434-c5d20df8a6ab",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2A6w4VdjAdyh4rvx",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get and Set Global Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get and Set Global Counter": {
+      "main": [
+        [
+          {
+            "node": "Send Count to Discord Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    },
+    "global": {
+      "counter": 5
+    }
+  },
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

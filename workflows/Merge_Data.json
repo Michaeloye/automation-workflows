@@ -1,0 +1,151 @@
+{
+  "name": "Merge Data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "ffcc6615-3601-4f1d-81f1-20eb56036747",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "lat",
+              "value": "7.520767"
+            },
+            {
+              "name": "lon",
+              "value": "4.530315"
+            },
+            {
+              "name": "appid",
+              "value": "cfb9a22338fbb70f33dcdb215f93ea58"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -160
+      ],
+      "id": "e64a5c30-3431-4bb4-88d3-9216fbaee9c8",
+      "name": "Fetch weather data"
+    },
+    {
+      "parameters": {
+        "url": "https://v6.exchangerate-api.com/v6/7cd4fd964db69d8c9aa75628/latest/NGN",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        32
+      ],
+      "id": "4dbfaa65-0c34-42cb-afea-c7375924afd6",
+      "name": "Fetch currency converstion rates data"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "42b62e3e-8679-4e5d-8931-743e8a6a95ab",
+      "name": "Merge weather and currency data"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"weather\": {{ $json.weather }},\n  \"coord\": {{ $json.coord }},\n  \"weatherDetails\": {{ $json.main }},\n  \"currencyConversion\": {\n    \"baseCur\": \"{{ $json.base_code }}\",\n    \"rates\": {{ $json.conversion_rates }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -64
+      ],
+      "id": "35b5d2b2-7b3e-4ea3-9ef5-45fe2ce37d72",
+      "name": "Format weather and currency data"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Fetch weather data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch currency converstion rates data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch weather data": {
+      "main": [
+        [
+          {
+            "node": "Merge weather and currency data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch currency converstion rates data": {
+      "main": [
+        [
+          {
+            "node": "Merge weather and currency data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge weather and currency data": {
+      "main": [
+        [
+          {
+            "node": "Format weather and currency data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,551 @@
+{
+  "name": "Branch Logic",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "ddc2ead8-1590-4787-9800-46ee7593ae98",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        304
+      ],
+      "id": "0fa43a24-5e81-4bef-8954-73c8d7672959",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "weather",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ca81c2c2-834c-4465-85c3-bd96f281759e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Weather data"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f346f6a1-c640-44f4-93a1-3a5a162440c2",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "article",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Article data"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "02257621-45c2-4e6b-bd9f-02d08a47320e",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "alert",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Alert data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "6a02cee1-b1bd-4da3-b4ca-bac04c9f6a1d",
+      "name": "Seperate weather, articles and alert"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.temperature }}",
+                    "rightValue": 20,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "26da522c-0c49-4495-9014-ce458d17cb3a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cold"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "df2aa128-7e9d-4c34-b981-2f1463e161ac",
+                    "leftValue": "={{ $json.temperature > 20 && $json.temperature < 30 }}",
+                    "rightValue": 20,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Warm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a9a53d74-ff3e-4204-9923-46f9a3188ea5",
+                    "leftValue": "={{ $json.temperature }}",
+                    "rightValue": 30,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Hot"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        -304
+      ],
+      "id": "912af525-4edb-42b2-ad72-293815068c6b",
+      "name": "Check weather temperature"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.level.toLowerCase() }}",
+                    "rightValue": "high",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "29c65710-e24f-44a9-9cbc-443db8ed21a5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "High alert"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ed83290f-cc81-4982-a75e-dfcd76b1ffb4",
+                    "leftValue": "={{ $json.level.toLowerCase() }}",
+                    "rightValue": "low",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Low alert"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        208
+      ],
+      "id": "0d8d86c9-c65c-40cf-a263-e9507b136f82",
+      "name": "Check alert level"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ede04d6e-edfa-460c-99b3-1d06761854fb",
+              "leftValue": "={{ $json.category.toLowerCase() }}",
+              "rightValue": "technology",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        -80
+      ],
+      "id": "57f49cc9-61cb-4db9-be0c-65384a7a7a4f",
+      "name": "Check article category"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        896,
+        -80
+      ],
+      "id": "ae9a52dc-d488-4c63-a4df-aa3e8681d1a6",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hello @everyone\n\n{{ $json.type.toUpperCase() }}: {{ $json.level.toUpperCase() }}\nWe have an alert with status of HIGH\nMessage:  {{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        896,
+        112
+      ],
+      "id": "1a199b4a-28d7-456a-9827-aa0de371ccde",
+      "name": "Send HIGH alert message to Discord channel",
+      "webhookId": "d0544dd5-5d47-4f91-a16c-ae458cb26290",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2A6w4VdjAdyh4rvx",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hello @everyone\n\n{{ $json.type.toUpperCase() }} Update:\n\nTOday is going to be {{ $json.condition }} with temperature of {{ $json.temperature }} Celcius",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -288
+      ],
+      "id": "e0a1c571-9c92-4f1f-a540-b07daebbc5bc",
+      "name": "Send temperate data to Discord channel",
+      "webhookId": "d0544dd5-5d47-4f91-a16c-ae458cb26290",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2A6w4VdjAdyh4rvx",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -80
+      ],
+      "id": "24bd71ec-4867-4bbb-8136-7a2bbcce4c93",
+      "name": "Mock Data"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Mock Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seperate weather, articles and alert": {
+      "main": [
+        [
+          {
+            "node": "Check weather temperature",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check article category",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check alert level",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check weather temperature": {
+      "main": [
+        [
+          {
+            "node": "Send temperate data to Discord channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Send temperate data to Discord channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check alert level": {
+      "main": [
+        [
+          {
+            "node": "Send HIGH alert message to Discord channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check article category": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mock Data": {
+      "main": [
+        [
+          {
+            "node": "Seperate weather, articles and alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {
+    "Mock Data": [
+      {
+        "json": {
+          "id": 1,
+          "type": "weather",
+          "temperature": 32,
+          "condition": "Sunny",
+          "location": "Lagos"
+        }
+      },
+      {
+        "json": {
+          "id": 2,
+          "type": "weather",
+          "temperature": 18,
+          "condition": "Rainy",
+          "location": "London"
+        }
+      },
+      {
+        "json": {
+          "id": 3,
+          "type": "weather",
+          "temperature": 25,
+          "condition": "Cloudy",
+          "location": "New York"
+        }
+      },
+      {
+        "json": {
+          "id": 4,
+          "type": "article",
+          "title": "AI transforming healthcare",
+          "category": "Technology"
+        }
+      },
+      {
+        "json": {
+          "id": 5,
+          "type": "article",
+          "title": "Stock markets rally after Fed decision",
+          "category": "Finance"
+        }
+      },
+      {
+        "json": {
+          "id": 6,
+          "type": "alert",
+          "level": "High",
+          "message": "Server CPU usage above 90%"
+        }
+      },
+      {
+        "json": {
+          "id": 7,
+          "type": "alert",
+          "level": "Low",
+          "message": "New login from unknown device"
+        }
+      }
+    ]
+  },
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

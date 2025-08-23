@@ -1,0 +1,310 @@
+{
+  "name": "Daily Summary",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3e4096fb-cfa2-4565-9ca6-33c8df3ade06",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "lat",
+              "value": "7.520767"
+            },
+            {
+              "name": "lon",
+              "value": "4.530315"
+            },
+            {
+              "name": "appid",
+              "value": "cfb9a22338fbb70f33dcdb215f93ea58"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -96
+      ],
+      "id": "4eb7eeb8-8a2a-49a3-abad-6acbfcd10e18",
+      "name": "Fetch current weather"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/top-headlines?sources=bbc-news",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "apiKey",
+              "value": "fcecf41c6c2a4cf380a832beeadffde2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        96
+      ],
+      "id": "64ca905b-651a-4d84-9571-1156027cdb59",
+      "name": "Fetch news"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5f1750b-a7f3-4d0e-8281-84654750e9b2",
+              "name": "weather",
+              "value": "={{ {...$json.weather[0], temp: $json.main.temp, country: $json.sys.country, state: $json.name} }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "264dbea0-2686-49b4-adf0-7ee75662f39e",
+      "name": "Format weather data"
+    },
+    {
+      "parameters": {
+        "sendTo": "davidoluwafemi178@gmail.com",
+        "subject": "Weather and News Updates 🚀",
+        "message": "={{ $json.htmlBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "f80ed232-dc3b-4788-a9fe-d19f8acf30a6",
+      "name": "Send a message",
+      "webhookId": "e0660425-d4d6-461f-9c8a-9fd8736115f3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Jw8SrAaUodsUPKb3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const weather = $input.first().json.weather\nconst articles = $input.first().json.articles\n\n// Convert Kelvin to Celsius\nconst tempC = (weather.temp - 273.15).toFixed(1);\n\nlet html = `\n<p>Hello Femooo, this message is from a friend</p>\n<h2>🌤 Weather Update</h2>\n<p><strong>Location:</strong> ${weather.state}, ${weather.country}</p>\n<p><strong>Condition:</strong> ${weather.main} (${weather.description})</p>\n<p><strong>Temperature:</strong> ${tempC}°C</p>\n\n<hr>\n\n<h2>📰 Top News</h2>\n<ul>\n`;\n\nfor (const article of articles) {\n  html += `<li><strong>${article.title}</strong>`;\n  if (article.author) html += ` - ${article.author}`;\n  html += `</li>`;\n}\n\nhtml += `</ul>`;\n\nreturn [\n  {\n    json: {\n      htmlBody: html\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "87323419-0cc1-4457-88cf-3243ca57c8d1",
+      "name": "Format HTML message"
+    },
+    {
+      "parameters": {
+        "jsCode": "const weatherData = $input.first().json.weather;\nconst articlesData = $input.last().json.articles;\n\nreturn {\n  weather: weatherData,\n  articles: articlesData\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "7a2ab443-ffdd-44d1-af7f-016687c59b79",
+      "name": "Combine weather and news data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67c78c15-caa4-49eb-824b-227a3be3a9cf",
+              "name": "articles[0].title",
+              "value": "={{ $json.articles[0].title }}",
+              "type": "string"
+            },
+            {
+              "id": "417130be-f3a9-4921-8f3f-1eddd49366f8",
+              "name": "articles[0].author",
+              "value": "={{ $json.articles[0].author }}",
+              "type": "string"
+            },
+            {
+              "id": "3fdf790d-98aa-4ec8-a0dc-7cc671fb7e2b",
+              "name": "articles[1].title",
+              "value": "={{ $json.articles[1].title }}",
+              "type": "string"
+            },
+            {
+              "id": "edeff38f-f18b-44c0-88aa-93ede0bd9d34",
+              "name": "articles[1].author",
+              "value": "={{ $json.articles[1].author }}",
+              "type": "string"
+            },
+            {
+              "id": "2e06a058-e25a-4ab1-80c9-78c9006675c7",
+              "name": "articles[2].title",
+              "value": "={{ $json.articles[1].title }}",
+              "type": "string"
+            },
+            {
+              "id": "8acd6264-d7ee-49ff-9fac-54e5d1645f66",
+              "name": "articles[2].author",
+              "value": "={{ $json.articles[1].author }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        96
+      ],
+      "id": "3dc7648a-9c5e-4852-ac1a-e15ec373ca17",
+      "name": "Get first 3 articles in news data"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "f3e93cab-c69d-4088-a0ca-0a1dca596deb",
+      "name": "Append weather and artices data"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Fetch current weather",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch current weather": {
+      "main": [
+        [
+          {
+            "node": "Format weather data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch news": {
+      "main": [
+        [
+          {
+            "node": "Get first 3 articles in news data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format weather data": {
+      "main": [
+        [
+          {
+            "node": "Append weather and artices data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format HTML message": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine weather and news data": {
+      "main": [
+        [
+          {
+            "node": "Format HTML message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get first 3 articles in news data": {
+      "main": [
+        [
+          {
+            "node": "Append weather and artices data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Append weather and artices data": {
+      "main": [
+        [
+          {
+            "node": "Combine weather and news data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
