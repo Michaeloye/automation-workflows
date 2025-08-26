@@ -1,0 +1,133 @@
+{
+  "name": "POST Request",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nlet global = $getWorkflowStaticData(\"global\")\n\nglobal.counter = (global?.counter || 0) + 1\n\nreturn {counter: global.counter};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "0dcb20c4-88c6-46cc-ac4a-2907a71c924e",
+      "name": "Add global counter"
+    },
+    {
+      "parameters": {
+        "url": "={{ $vars.DUMMY_JSON_API }}?limit=1&skip={{ $json.counter - 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -16
+      ],
+      "id": "5d18c05c-e5fc-4c66-a9ac-b1939263a0d7",
+      "name": "Dynamic fetch todos data based on global counter"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        -16
+      ],
+      "id": "98230e76-0578-4cac-877f-e7948766951e",
+      "name": "Run at 30 seconds interval"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=Hello there,\nThis is the task for now (TASK {{ $json.todos[0].id }}):\n* {{ $json.todos[0].todo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -16
+      ],
+      "id": "2430231b-9059-4e71-9c59-7040a581a99b",
+      "name": "Send todo item to discord channel",
+      "webhookId": "d533f105-7dec-463a-bc08-687769a096ea",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "2A6w4VdjAdyh4rvx",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Add global counter": {
+      "main": [
+        [
+          {
+            "node": "Dynamic fetch todos data based on global counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run at 30 seconds interval": {
+      "main": [
+        [
+          {
+            "node": "Add global counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dynamic fetch todos data based on global counter": {
+      "main": [
+        [
+          {
+            "node": "Send todo item to discord channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "59f97f85-04d2-46a6-ae22-aa609b3b75a4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8039a53e53f391006b4f2532a5a482b1ad7ba351a1bfd4b122daefb6f023ef3e"
+  },
+  "id": "kVx2xf56Bqq4hpaL",
+  "tags": [
+    {
+      "name": "Day 12",
+      "id": "NCDwySVrEFWKf0XB",
+      "createdAt": "2025-08-26T21:08:18.714Z",
+      "updatedAt": "2025-08-26T21:08:18.714Z"
+    },
+    {
+      "name": "Dynamic data",
+      "id": "fnenAcQ8nB81s9gH",
+      "createdAt": "2025-08-26T21:08:33.654Z",
+      "updatedAt": "2025-08-26T21:08:33.654Z"
+    }
+  ]
+}
