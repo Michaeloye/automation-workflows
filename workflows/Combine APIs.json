@@ -1,0 +1,227 @@
+{
+  "name": "Combine APIs",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6893dd40-b33f-4cc6-a39e-67f59ed3e69a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "emailFinder",
+        "domain": "abchina.com",
+        "firstname": "Angela",
+        "lastname": "Chew"
+      },
+      "type": "n8n-nodes-base.hunter",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4a6ac9f1-093f-47e7-85c4-a50f2a142217",
+      "name": "Hunter",
+      "credentials": {
+        "hunterApi": {
+          "id": "Zpc3GCmvU53WE6eT",
+          "name": "Hunter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appATIpQhToOrYjAz",
+          "mode": "list",
+          "cachedResultName": "n8n base",
+          "cachedResultUrl": "https://airtable.com/appATIpQhToOrYjAz"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbldWgTqospQ2iCub",
+          "mode": "list",
+          "cachedResultName": "n8n table",
+          "cachedResultUrl": "https://airtable.com/appATIpQhToOrYjAz/tbldWgTqospQ2iCub"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.first_name }} {{ $json.last_name }}",
+            "Email": "={{ $json.email }}",
+            "Company": "={{ $json.company }}",
+            "Status": "Done"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "3b21be9e-7ea4-421c-8ac6-a1f56f4a469e",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "RXCJkranYbuLnu0i",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Hunter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hunter": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cb2d7dc4-ff18-4c88-ab5b-ededcc5dc25d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8039a53e53f391006b4f2532a5a482b1ad7ba351a1bfd4b122daefb6f023ef3e"
+  },
+  "id": "TDtTopZHowChQRmk",
+  "tags": [
+    {
+      "name": "Day 13",
+      "id": "7yyWh1gLu7aiNk0f",
+      "createdAt": "2025-08-27T22:05:32.724Z",
+      "updatedAt": "2025-08-27T22:05:32.724Z"
+    },
+    {
+      "name": "Hunter.io",
+      "id": "duvW6S9Ph8V9HoXQ",
+      "createdAt": "2025-08-27T22:05:35.259Z",
+      "updatedAt": "2025-08-27T22:05:35.259Z"
+    },
+    {
+      "name": "Airtable",
+      "id": "LMvEaiHqxjJUGhW7",
+      "createdAt": "2025-08-27T22:05:39.602Z",
+      "updatedAt": "2025-08-27T22:05:39.602Z"
+    },
+    {
+      "name": "Enrich data",
+      "id": "gdxD01EoBsIKuSmt",
+      "createdAt": "2025-08-27T22:05:52.655Z",
+      "updatedAt": "2025-08-27T22:05:52.655Z"
+    }
+  ]
+}
