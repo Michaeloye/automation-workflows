@@ -1,0 +1,405 @@
+{
+  "name": "Error Handling",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        272
+      ],
+      "id": "0f09ec7f-4075-46ed-b6df-9cc784abb16f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=https://mock.httpstatus.io/500",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        96
+      ],
+      "id": "c201cddd-0045-4165-8dde-36aa1cd63daa",
+      "name": "HTTP Request",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        272
+      ],
+      "id": "3ae34a56-00a2-4c85-a369-deb3b9d2e469",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.error.status }}",
+                    "rightValue": 500,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    },
+                    "id": "3371fc42-f534-48e6-b1ec-59807f1225a2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Server error"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "709c1549-a52f-4bbd-b2b3-458ab413fcc5",
+                    "leftValue": "={{ $json.error.status }}",
+                    "rightValue": 400,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Client error"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b06ffb3a-2315-467f-8a48-3775dfc0b0d5",
+                    "leftValue": "={{ $json.error.status }}",
+                    "rightValue": 200,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Success"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        80
+      ],
+      "id": "c285e61d-9c29-4979-ae8f-e479cbd460c4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE",
+          "mode": "list",
+          "cachedResultName": "n8n Dummy Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 133748228,
+          "mode": "list",
+          "cachedResultName": "N8N_result",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AF0jdf7edz6F2oDRJe9lrLap962lLF4vdC-Z_Nr3uPE/edit#gid=133748228"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "test@test.co",
+            "full_name": "test pass"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        288
+      ],
+      "id": "165d2c9a-764a-4b2c-a9a7-e99deb5fe296",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zap4dE5GI28s7w9X",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorType": "errorObject",
+        "errorObject": "={\n\"error\":\n{\n  \"code\": \"{{ $json.error.code }}\",\n\"message\": \"{{ $json.error.message.replaceAll('\"', \"'\") }}\",\n  \"status\": {{ $json.error.status }}\n} \n}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        896,
+        96
+      ],
+      "id": "8f13603a-f1b9-4a32-8ffb-cb2e08b158dd",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a05eaf91-673f-419b-a933-c20a73c8148f",
+              "leftValue": "={{ $json.error.code }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b3ce6ae4-d39a-4728-a0ba-3d6517e2965d",
+              "leftValue": "={{ $('Edit Fields').item.json?.iterator ?? 0 }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -96
+      ],
+      "id": "95c1d947-cba8-45f1-8af9-53b720764aa8",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        -112
+      ],
+      "id": "a1228133-ea5d-4350-9f17-d89d205d707b",
+      "name": "Wait",
+      "webhookId": "b8686cd4-ddd2-41d2-8e56-b0fa884ca711"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b0e5cfaf-a3e4-4ed3-9f92-7f8558c56f57",
+              "name": "iterator",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        352
+      ],
+      "id": "dbd2f9dc-f3e2-423a-a1cd-c9de7eaf70b2",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ec1e9912-bc88-4d1f-8cb4-2b6febf1b7ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8039a53e53f391006b4f2532a5a482b1ad7ba351a1bfd4b122daefb6f023ef3e"
+  },
+  "id": "X08Ls2HhGGVl00gT",
+  "tags": [
+    {
+      "name": "Day 14",
+      "id": "zgUqGjHfroLY5hz8",
+      "createdAt": "2025-08-29T21:56:07.006Z",
+      "updatedAt": "2025-08-29T21:56:07.006Z"
+    },
+    {
+      "name": "Failed request",
+      "id": "4dKmUCtPOD3UkuSa",
+      "createdAt": "2025-08-29T21:56:14.277Z",
+      "updatedAt": "2025-08-29T21:56:14.277Z"
+    }
+  ]
+}
