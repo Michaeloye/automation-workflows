@@ -226,24 +226,24 @@
                 "useNewZLibDeCompress": true
             },
             "mapper": {
+                "ca": "",
+                "qs": [],
                 "url": "https://www.deckofcardsapi.com/api/deck/{{1.data.deck_id}}/draw/?count=10",
-                "serializeUrl": false,
+                "gzip": true,
                 "method": "get",
                 "headers": [],
-                "qs": [],
-                "bodyType": "",
-                "parseResponse": false,
-                "authUser": "",
-                "authPass": "",
                 "timeout": "",
+                "useMtls": false,
+                "authPass": "",
+                "authUser": "",
+                "bodyType": "",
+                "serializeUrl": false,
                 "shareCookies": false,
-                "ca": "",
-                "rejectUnauthorized": true,
+                "parseResponse": false,
                 "followRedirect": true,
                 "useQuerystring": false,
-                "gzip": true,
-                "useMtls": false,
-                "followAllRedirects": false
+                "followAllRedirects": false,
+                "rejectUnauthorized": true
             },
             "metadata": {
                 "designer": {
@@ -253,14 +253,14 @@
                 },
                 "restore": {
                     "expect": {
+                        "qs": {
+                            "mode": "chose"
+                        },
                         "method": {
                             "mode": "chose",
                             "label": "GET"
                         },
                         "headers": {
-                            "mode": "chose"
-                        },
-                        "qs": {
                             "mode": "chose"
                         },
                         "bodyType": {
@@ -312,39 +312,39 @@
                     },
                     {
                         "name": "headers",
-                        "type": "array",
-                        "label": "Headers",
                         "spec": [
                             {
                                 "name": "name",
-                                "label": "Name",
                                 "type": "text",
+                                "label": "Name",
                                 "required": true
                             },
                             {
                                 "name": "value",
-                                "label": "Value",
-                                "type": "text"
+                                "type": "text",
+                                "label": "Value"
                             }
-                        ]
+                        ],
+                        "type": "array",
+                        "label": "Headers"
                     },
                     {
                         "name": "qs",
-                        "type": "array",
-                        "label": "Query String",
                         "spec": [
                             {
                                 "name": "name",
-                                "label": "Name",
                                 "type": "text",
+                                "label": "Name",
                                 "required": true
                             },
                             {
                                 "name": "value",
-                                "label": "Value",
-                                "type": "text"
+                                "type": "text",
+                                "label": "Value"
                             }
-                        ]
+                        ],
+                        "type": "array",
+                        "label": "Query String"
                     },
                     {
                         "name": "bodyType",
@@ -640,8 +640,8 @@
             "module": "util:TextAggregator",
             "version": 1,
             "parameters": {
-                "rowSeparator": "",
-                "feeder": 5
+                "feeder": 5,
+                "rowSeparator": ""
             },
             "mapper": {
                 "value": ""
@@ -653,14 +653,14 @@
                     "name": "Stop iteration"
                 },
                 "restore": {
+                    "extra": {
+                        "feeder": {
+                            "label": "Iterate through cards [5]"
+                        }
+                    },
                     "parameters": {
                         "rowSeparator": {
                             "label": "Empty"
-                        }
-                    },
-                    "extra": {
-                        "feeder": {
-                            "label": "Iterator [5]"
                         }
                     }
                 },
@@ -688,6 +688,63 @@
             }
         },
         {
+            "id": 21,
+            "module": "util:SetVariable2",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "name": "Audio URL",
+                "scope": "roundtrip",
+                "value": "https://drive.google.com/uc?export=download&id=17DrfqKh2hfBxe2KZ7bT784m0Vj66LO37"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 2100,
+                    "y": 0,
+                    "name": "Audio URL"
+                },
+                "restore": {
+                    "expect": {
+                        "scope": {
+                            "label": "One cycle"
+                        }
+                    }
+                },
+                "expect": [
+                    {
+                        "name": "name",
+                        "type": "text",
+                        "label": "Variable name",
+                        "required": true
+                    },
+                    {
+                        "name": "scope",
+                        "type": "select",
+                        "label": "Variable lifetime",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "roundtrip",
+                                "execution"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "any",
+                        "label": "Variable value"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "Audio URL",
+                        "label": "Audio URL",
+                        "type": "any"
+                    }
+                ]
+            }
+        },
+        {
             "id": 12,
             "module": "json2video:createSlideshowWithAudio",
             "version": 1,
@@ -695,7 +752,7 @@
                 "__IMTCONN__": 11180779
             },
             "mapper": {
-                "resolution": "instagram-story",
+                "resolution": "custom",
                 "slides": [
                     {
                         "type": "image",
@@ -739,11 +796,13 @@
                         "zoom": "-2",
                         "duration": "2"
                     }
-                ]
+                ],
+                "width": "226",
+                "height": "314"
             },
             "metadata": {
                 "designer": {
-                    "x": 2100,
+                    "x": 2400,
                     "y": 0,
                     "name": "Create vertical video using cards image"
                 },
@@ -760,7 +819,7 @@
                     "expect": {
                         "resolution": {
                             "mode": "chose",
-                            "label": "1080x1920 - Vertical"
+                            "label": "Custom size"
                         },
                         "slides": {
                             "mode": "chose",
@@ -945,6 +1004,16 @@
                                 "label": "Value"
                             }
                         ]
+                    },
+                    {
+                        "name": "width",
+                        "type": "integer",
+                        "label": "Width"
+                    },
+                    {
+                        "name": "height",
+                        "type": "integer",
+                        "label": "Height"
                     }
                 ]
             }
@@ -961,9 +1030,299 @@
             },
             "metadata": {
                 "designer": {
-                    "x": 2400,
+                    "x": 2700,
                     "y": 0,
                     "name": "Wait for video to render"
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "json2video"
+                            },
+                            "label": "My JSON2Video connection (notguy47@gmail.com - admin)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:json2video",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "project",
+                        "type": "text",
+                        "label": "Project ID",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 22,
+            "module": "json2video:addAutomaticSubtitlesFromAudio",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 11180779
+            },
+            "mapper": {
+                "resolution": "instagram-story",
+                "video_url": "{{14.movie.url}}",
+                "resize": "none",
+                "mute_video": false,
+                "audio_url": "{{21.`Audio URL`}}",
+                "voice_language": "en"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3000,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "My JSON2Video connection (notguy47@gmail.com - admin)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "json2video"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "resolution": {
+                            "mode": "chose",
+                            "label": "1080x1920 - Vertical"
+                        },
+                        "resize": {
+                            "mode": "chose",
+                            "label": "Do not resize"
+                        },
+                        "mute_video": {
+                            "mode": "chose"
+                        },
+                        "voice_language": {
+                            "mode": "chose",
+                            "label": "English"
+                        },
+                        "transcription_model": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "trim_video": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "position": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "client_data": {
+                            "mode": "chose"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:json2video",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "resolution",
+                        "type": "select",
+                        "label": "Output video resolution",
+                        "validate": {
+                            "enum": [
+                                "full-hd",
+                                "instagram-story",
+                                "squared",
+                                "custom"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "video_url",
+                        "type": "text",
+                        "label": "Video url"
+                    },
+                    {
+                        "name": "resize",
+                        "type": "select",
+                        "label": "Resize",
+                        "validate": {
+                            "enum": [
+                                "none",
+                                "fill",
+                                "fit"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "mute_video",
+                        "type": "boolean",
+                        "label": "Mute video"
+                    },
+                    {
+                        "name": "audio_url",
+                        "type": "text",
+                        "label": "Audio url"
+                    },
+                    {
+                        "name": "voice_language",
+                        "type": "select",
+                        "label": "Voice language",
+                        "validate": {
+                            "enum": [
+                                "auto",
+                                "en",
+                                "ca",
+                                "zh",
+                                "zh-TW",
+                                "da",
+                                "nl",
+                                "fr",
+                                "fi",
+                                "de",
+                                "el",
+                                "hi",
+                                "hi-Latn",
+                                "id",
+                                "it",
+                                "ja",
+                                "ko",
+                                "ms",
+                                "pt",
+                                "pt-BR",
+                                "ru",
+                                "es",
+                                "es-419",
+                                "sv",
+                                "th",
+                                "tr",
+                                "uk",
+                                "vi"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "transcription_model",
+                        "type": "select",
+                        "label": "Transcription model",
+                        "validate": {
+                            "enum": [
+                                "default",
+                                "whisper"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "trim_video",
+                        "type": "select",
+                        "label": "Trim video",
+                        "validate": {
+                            "enum": [
+                                "-2",
+                                "-1"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "font_family",
+                        "type": "text",
+                        "label": "Font family"
+                    },
+                    {
+                        "name": "font_url",
+                        "type": "text",
+                        "label": "Font url"
+                    },
+                    {
+                        "name": "font_size",
+                        "type": "number",
+                        "label": "Font size"
+                    },
+                    {
+                        "name": "word_color",
+                        "type": "text",
+                        "label": "Word color"
+                    },
+                    {
+                        "name": "line_color",
+                        "type": "text",
+                        "label": "Line color"
+                    },
+                    {
+                        "name": "outline_width",
+                        "type": "number",
+                        "label": "Outline width"
+                    },
+                    {
+                        "name": "position",
+                        "type": "select",
+                        "label": "Position",
+                        "validate": {
+                            "enum": [
+                                "top-left",
+                                "top-center",
+                                "top-right",
+                                "center-left",
+                                "center-center",
+                                "center-right",
+                                "bottom-left",
+                                "bottom-center",
+                                "bottom-right",
+                                "mid-bottom-center",
+                                "mid-top-center"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "make_webhook_url",
+                        "type": "text",
+                        "label": "Webhook URL"
+                    },
+                    {
+                        "name": "client_data",
+                        "type": "array",
+                        "label": "Client data",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 23,
+            "module": "json2video:waitForAMovieToRender",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 11180779
+            },
+            "mapper": {
+                "project": "{{22.project}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3300,
+                    "y": 0
                 },
                 "restore": {
                     "parameters": {
@@ -992,6 +1351,176 @@
                         "required": true
                     }
                 ]
+            }
+        },
+        {
+            "id": 17,
+            "module": "http:ActionGetFile",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false
+            },
+            "mapper": {
+                "url": "{{23.movie.url}}",
+                "serializeUrl": false,
+                "method": "get",
+                "shareCookies": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3600,
+                    "y": 0
+                },
+                "restore": {},
+                "parameters": [
+                    {
+                        "name": "handleErrors",
+                        "type": "boolean",
+                        "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "serializeUrl",
+                        "type": "boolean",
+                        "label": "Serialize URL",
+                        "required": true
+                    },
+                    {
+                        "name": "method",
+                        "type": "hidden",
+                        "label": "Method"
+                    },
+                    {
+                        "name": "shareCookies",
+                        "type": "boolean",
+                        "label": "Share cookies with other HTTP modules",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 18,
+            "module": "google-drive:uploadAFile",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 11343058
+            },
+            "mapper": {
+                "select": "value",
+                "filename": "{{timestamp}}{{17.fileName}}",
+                "data": "{{17.data}}",
+                "convert": false,
+                "destination": "drive",
+                "folderId": "/1xaIAzaeyarNMZz3C7jkCoo2zwl9O2-ze/14DnCcm-pTG80AvIoJhsnG_ce07N2YSSz"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 3900,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "student account (mooyebadejo@student.oauife.edu.ng)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "select": {
+                            "label": "Select from the list"
+                        },
+                        "destination": {
+                            "label": "My Drive"
+                        },
+                        "folderId": {
+                            "mode": "chose",
+                            "path": [
+                                "Make.com data",
+                                "results"
+                            ]
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "type": "hidden"
+                    },
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Enter a Folder ID",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "map",
+                                "value"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "type": "text",
+                        "label": "New File Name"
+                    },
+                    {
+                        "name": "filename",
+                        "type": "text",
+                        "label": "File Name",
+                        "required": true
+                    },
+                    {
+                        "name": "data",
+                        "type": "buffer",
+                        "label": "Data",
+                        "required": true
+                    },
+                    {
+                        "name": "convert",
+                        "type": "boolean",
+                        "label": "Convert a File",
+                        "required": true
+                    },
+                    {
+                        "name": "destination",
+                        "type": "select",
+                        "label": "New Drive Location",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "folderId",
+                        "type": "folder",
+                        "label": "New Folder Location",
+                        "required": true
+                    }
+                ],
+                "advanced": true
             }
         }
     ],
