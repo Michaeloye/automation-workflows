@@ -1,0 +1,706 @@
+{
+  "name": "OTP Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0317bc72-dd3e-4387-982c-9fae227d2193",
+              "name": "otp",
+              "value": "={{ Math.floor(1000 + Math.random() * 9000) }}",
+              "type": "number"
+            },
+            {
+              "id": "f721a705-349b-4395-96c3-a2775e6bf08c",
+              "name": "user",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "6cb94d01-0e89-41b4-9832-55ed9558dcec",
+              "name": "phone",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        360
+      ],
+      "id": "e2099438-bc55-4377-b105-b2cf9fe3d4a9",
+      "name": "Phone OTP"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca34a7ef-6256-4ca1-bdea-5e17c22aa90e",
+              "name": "otp",
+              "value": "={{ [...Array(8)].map(() => String.fromCharCode(65 + Math.floor(Math.random()*26))).join('') }}",
+              "type": "string"
+            },
+            {
+              "id": "4855a64a-e1ea-43bf-8199-ad96ceb673e5",
+              "name": "user",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "26590413-913b-4583-8ba9-a1eca44ecc1b",
+              "name": "email",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -660
+      ],
+      "id": "2a570afa-3833-4524-9e27-deb3a664e9b4",
+      "name": "Email OTP"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a6923f53-4346-4b4b-a739-7027d6484506",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "123",
+              "operator": {
+                "type": "string",
+                "operation": "notStartsWith"
+              }
+            },
+            {
+              "id": "4e25f4f4-0274-4e96-a87c-91a7443d4bea",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "+123",
+              "operator": {
+                "type": "string",
+                "operation": "notStartsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        360
+      ],
+      "id": "b37417ea-d519-4cd8-8f41-61175c99e1bb",
+      "name": "Skip specific numbers"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c7e91c2-450c-48c6-942d-49b12cdba2d1",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^\\+?[1-9]\\d{7,14}$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "f2da7ed3-6438-4fa2-b201-d28fdc307ac9"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        100,
+        60
+      ],
+      "id": "bf1bcd5a-43f0-45b1-b7c5-7e908f6e1510",
+      "name": "Phone or Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "OTP",
+        "message": "=Hi\n\nHere’s your single-use code:\n\n<h2 style=\"margin:0;font-size:28px;letter-spacing:4px;\">{{ $json.otp }}</h2>\nThis code is valid for the next 10 minutes.\nPlease do not share it with anyone—our team will never ask for it.\n\nIf you didn’t request this code, you can safely ignore this email.\n\nThanks for keeping your account secure!\nThe Bobr team",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        -660
+      ],
+      "id": "a8fce791-5838-4530-8e6b-2c6fa181d3e5",
+      "name": "Send email",
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $json.user + '' }}",
+        "messageData": "={{ $json.otp + '' }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -140
+      ],
+      "id": "6237a77c-f155-436e-a134-d79b93687869",
+      "name": "Save OTP to cache"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -420,
+        60
+      ],
+      "id": "f5811b09-59cd-4855-bfe2-8f4b5473823e",
+      "name": "On TG message received",
+      "webhookId": ""
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dee61407-9a45-4d09-9dee-22f07e464e97",
+              "leftValue": "={{ $json.message.chat.id }}",
+              "rightValue": 10101010101,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        60
+      ],
+      "id": "d202cc40-01da-4cf8-b6ff-d6b2b6f74a85",
+      "name": "Allow only specific chat"
+    },
+    {
+      "parameters": {
+        "resource": "call",
+        "from": "+000000000",
+        "to": "={{ $json.phone }}",
+        "message": "=Your one time password is:  {{ $json.otp }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        360
+      ],
+      "id": "3690b1ad-8ed2-47e3-9376-ba45bf7e3774",
+      "name": "Make call",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "Bad request - please check your parameters",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "97193168-0b48-42ad-9d71-d3b94062814e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "288e2c61-179c-4332-8016-321498820f8b",
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2fc605c6-6ee2-4730-ad2e-1689bcb3cb4f",
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "Something went wrong...",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1520,
+        380
+      ],
+      "id": "401343ef-967b-4467-9319-0715804e650c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "tableId": "success_log",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user",
+              "fieldValue": "={{ $('On TG message received').item.json.message.from.username }}"
+            },
+            {
+              "fieldId": "json",
+              "fieldValue": "={\n  \"userMessage\": \"{{ $node['On TG message received'].json.message.text }}\",\n  \"emailOtp\":    \"{{ $('Email OTP')?.item.json.otp }}\",\n  \"phoneOtp\":    \"{{ $('Phone OTP').item.json.otp }}\"\n}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        -660
+      ],
+      "id": "b56b1e41-948f-4bb8-a529-815d93abec94",
+      "name": "Log success"
+    },
+    {
+      "parameters": {
+        "errorMessage": "=user: {{ $('On TG message received').item.json.message.from.username }}\nerror: {{ $json.error }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1880,
+        240
+      ],
+      "id": "2ef5c796-915b-47c2-b73c-84cda2b636f1",
+      "name": "Twilio Non-Retriable Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "af80ceb5-4490-4982-86a0-5093d0048cc5",
+              "leftValue": "={{ $('Make call').item.json.error }}",
+              "rightValue": "Bad request - please check your parameters",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ff808d00-f61c-4c78-80a7-0ebd8c6c1426",
+              "leftValue": "={{ Number($('Merge').item.json.attempt ?? 1) }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1880,
+        400
+      ],
+      "id": "ee4f49ff-52a4-450d-a60a-3428618a4b44",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22397f68-90bc-41c1-8dc8-4d97b46affdb",
+              "name": "attempt",
+              "value": "={{ Number($('Merge').item.json.attempt ?? 0) + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2440,
+        680
+      ],
+      "id": "bf47f006-4d33-4f80-bb17-2ecbe0cb4c8b",
+      "name": "Increase Attempts"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2160,
+        680
+      ],
+      "id": "1ef8ed83-5220-4cc9-ba9b-6d31483dd103",
+      "name": "Wait",
+      "webhookId": ""
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        880,
+        360
+      ],
+      "id": "67671214-9fdd-4249-8b9a-4aa0fd422d8d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "from": "+00000000000",
+        "to": "+00000000001",
+        "message": "test",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sms77",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        420
+      ],
+      "id": "4c534120-17a1-4fa6-aad2-e90aeec51b49",
+      "name": "seven"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Phone OTP": {
+      "main": [
+        [
+          {
+            "node": "Save OTP to cache",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email OTP": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save OTP to cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip specific numbers": {
+      "main": [
+        [
+          {
+            "node": "Phone OTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Phone or Email": {
+      "main": [
+        [
+          {
+            "node": "Email OTP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip specific numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On TG message received": {
+      "main": [
+        [
+          {
+            "node": "Allow only specific chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Allow only specific chat": {
+      "main": [
+        [
+          {
+            "node": "Phone or Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make call": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Twilio Non-Retriable Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Log success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "seven",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increase Attempts": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Increase Attempts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Make call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "versionId": "",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": ""
+  },
+  "id": "FFfivEbOtaxzdQ79",
+  "tags": []
+}
